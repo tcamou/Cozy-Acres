@@ -198,13 +198,17 @@ class SoilLayer:
         for soil_sprite in self.soil_sprites.sprites():
             if soil_sprite.rect.collidepoint(target_pos):
                 # play audio
-                self.plant_sound.play()
+                # self.plant_sound.play()
 
                 # tile update
                 x = soil_sprite.rect.x // TILE_SIZE
                 y = soil_sprite.rect.y // TILE_SIZE
-                if 'P' not in self.grid[y][x]:
-                    self.grid[y][x].append('P')
+                if 'C' not in self.grid[y][x] and 'T' not in self.grid[y][x]:
+                    if seed == 'corn':
+                        letter = 'C'
+                    elif seed == 'tomato':
+                        letter = 'T'
+                    self.grid[y][x].append(letter)
                     Plant(
                         type = seed,
                         groups = [self.all_sprites, self.plant_sprites, self.collision_sprites],
@@ -215,6 +219,24 @@ class SoilLayer:
                 # write to JSON
                 with open("save.json", "w") as outfile:
                     dump(self.grid, outfile)
+            
+    def load_seed(self, target_pos, seed):
+        if ANALYTICS:
+            print('planting seed')
+            if load:
+                print('from save')
+
+        for soil_sprite in self.soil_sprites.sprites():
+            if soil_sprite.rect.collidepoint(target_pos):
+                # tile update
+                x = soil_sprite.rect.x // TILE_SIZE
+                y = soil_sprite.rect.y // TILE_SIZE
+                Plant(
+                    type = seed,
+                    groups = [self.all_sprites, self.plant_sprites, self.collision_sprites],
+                    soil = soil_sprite,
+                    check_watered = self.check_watered
+                )               
 
     def update_plants(self):
         for plant in self.plant_sprites.sprites():
@@ -294,4 +316,16 @@ class SoilLayer:
                         pos = (col_index * TILE_SIZE, row_index * TILE_SIZE),
                         surf = self.soil_surfs[tile_type],
                         groups = [self.all_sprites, self.soil_sprites]
+                    )
+
+                if 'C' in cell:
+                    self.load_seed(
+                        target_pos = (col_index * TILE_SIZE, row_index * TILE_SIZE),
+                        seed = 'corn'
+                    )
+
+                if 'T' in cell:
+                    self.load_seed(
+                        target_pos = (col_index * TILE_SIZE, row_index * TILE_SIZE),
+                        seed = 'tomato'
                     )

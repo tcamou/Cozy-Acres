@@ -230,7 +230,8 @@ class Level:
                     # update soil tile data
                     row = plant.rect.centery // TILE_SIZE
                     col = plant.rect.centerx // TILE_SIZE
-                    self.soil_layer.grid[row][col].remove('P')
+                    self.soil_layer.grid[row][col].remove('C')
+                    self.soil_layer.grid[row][col].remove('T')
 
     def cow_collision(self):
         for cow in self.cow_sprites.sprites():

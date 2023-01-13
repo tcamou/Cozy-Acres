@@ -214,7 +214,7 @@ class Inventory:
 
         # quit menu
         if keys[pygame.K_ESCAPE]:
-            self.toggle_menu()
+            self.toggle_inventory()
 
         # selected 
         if not self.timer.active:
