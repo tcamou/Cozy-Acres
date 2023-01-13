@@ -13,7 +13,8 @@ class Player(pygame.sprite.Sprite):
         tree_sprites, 
         interaction_sprites,
         soil_layer,
-        toggle_shop) -> None:
+        toggle_shop,
+        toggle_inventory) -> None:
         super().__init__(group)
 
         # import graphics from support
@@ -49,7 +50,7 @@ class Player(pygame.sprite.Sprite):
         self.selected_tool = self.tools[self.tool_index]
 
         # seed attributes
-        self.seeds = ['corn', 'tomato']
+        self.seeds = ['corn_seed', 'tomato_seed']
         self.seed_index = 0
         self.selected_seed = self.seeds[self.seed_index]
 
@@ -62,8 +63,8 @@ class Player(pygame.sprite.Sprite):
             'tomato': start_items
         }
         self.seed_inventory = {
-            'corn': 5,
-            'tomato': 5
+            'corn_seed': 5,
+            'tomato_seed': 5
         }
         self.money = 200
 
@@ -73,6 +74,7 @@ class Player(pygame.sprite.Sprite):
         self.sleep = False
         self.soil_layer = soil_layer
         self.toggle_shop = toggle_shop
+        self.toggle_inventory = toggle_inventory
 
         # import audio
         self.water_sound = pygame.mixer.Sound('../audio/water.mp3')
@@ -105,7 +107,8 @@ class Player(pygame.sprite.Sprite):
 
     def use_seed(self) -> None:
         if self.seed_inventory[self.selected_seed] > 0:
-            self.soil_layer.plant_seed(self.target_pos, self.selected_seed)
+            temp_seed = self.selected_seed.replace('_seed', '')
+            self.soil_layer.plant_seed(self.target_pos, temp_seed)
             self.seed_inventory[self.selected_seed] -= 1
 
     def import_assets(self) -> None:
@@ -182,7 +185,7 @@ class Player(pygame.sprite.Sprite):
                     self.seed_index = 0
                 self.selected_seed = self.seeds[self.seed_index]
 
-            # sleep
+            # sleep / shop
             if keys[pygame.K_RETURN]:
                 collided_interaction_sprite = pygame.sprite.spritecollide(self, self.interaction_sprites, False)
                 if collided_interaction_sprite:
@@ -191,6 +194,11 @@ class Player(pygame.sprite.Sprite):
                     elif collided_interaction_sprite[0].name == 'Bed':
                         self.status = 'left_idle'
                         self.sleep = True
+
+            if keys[pygame.K_i]:
+                if ANALYTICS and INVENTORY:
+                    print('inventory')
+                self.toggle_inventory()
 
     def get_status(self) -> None:
         # set idle status

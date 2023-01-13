@@ -3,7 +3,7 @@ from pygame.math import Vector2
 
 # analysis mode
 ANALYTICS = True
-HITBOX = True
+HITBOX = False
 ACTION = False
 INVENTORY = True
 SHOP = True
@@ -32,7 +32,7 @@ TILE_SIZE = 64
 # overlay positions 
 OVERLAY_POSITIONS = {
 	'tool' : (40, SCREEN_HEIGHT - 15), 
-	'seed': (80, SCREEN_HEIGHT - 5)}
+	'seed': (100, SCREEN_HEIGHT - 5)}
 
 # tool use offset
 PLAYER_TOOL_OFFSET = {
@@ -82,6 +82,6 @@ SALE_PRICES = {
 
 # merchant purchases
 PURCHASE_PRICES = {
-	'corn': 4,
-	'tomato': 5
+	'corn_seed': 4,
+	'tomato_seed': 5
 }

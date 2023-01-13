@@ -8,7 +8,7 @@ from support import *
 from transition import Transition
 from soil import SoilLayer
 from sky import Rain, Sky
-from menu import Menu
+from menu import Menu, Inventory
 from random import randint
 from time import sleep
 from cow import Cow
@@ -33,7 +33,7 @@ class Level:
 
         # sky
         self.rain = Rain(self.all_sprites)
-        self.raining = True if RAIN_MODE else randint(0, 10) < 4
+        self.raining = True if RAIN_MODE else randint(0, 10) < 3
         self.soil_layer.raining = self.raining
         self.sky = Sky()
 
@@ -42,6 +42,13 @@ class Level:
         self.menu = Menu(
             player = self.player,
             toggle_menu = self.toggle_shop
+        )
+
+        # inventory menu
+        self.inventory_active = False
+        self.inventory = Inventory(
+            player = self.player,
+            toggle_inventory = self.toggle_inventory
         )
 
         # import audio
@@ -130,7 +137,8 @@ class Level:
                     tree_sprites = self.tree_sprites,
                     interaction_sprites = self.interaction_sprites,
                     soil_layer = self.soil_layer,
-                    toggle_shop = self.toggle_shop
+                    toggle_shop = self.toggle_shop,
+                    toggle_inventory = self.toggle_inventory
                 )
 
             if obj.name == 'Bed':
@@ -168,6 +176,10 @@ class Level:
         self.shop_active = not self.shop_active
         sleep(0.1)
 
+    def toggle_inventory(self):
+        self.inventory_active = not self.inventory_active
+        sleep(0.1)
+
     def player_add(self, item):
         # update inventory
         self.player.item_inventory[item] += 1
@@ -189,7 +201,7 @@ class Level:
         self.soil_layer.remove_water()
 
         # randomize rain
-        self.raining = True if RAIN_MODE else randint(0, 10) < 4
+        self.raining = True if RAIN_MODE else randint(0, 10) < 3
         self.soil_layer.raining = self.raining
         if self.raining:
             self.soil_layer.water_all()
@@ -235,6 +247,8 @@ class Level:
         # updates
         if self.shop_active:
             self.menu.update()
+        elif self.inventory_active:
+            self.inventory.update()
         else:    
             self.all_sprites.update(dt)
             self.plant_collision()
