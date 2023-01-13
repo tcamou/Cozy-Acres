@@ -12,6 +12,7 @@ from menu import Menu, Inventory
 from random import randint
 from time import sleep
 from cow import Cow
+from json import dump, load
 
 class Level:
     def __init__(self):
@@ -186,6 +187,10 @@ class Level:
 
         # play audio
         self.success.play()
+
+        # save to JSON
+        with open("items.json", "w") as outfile:
+            dump(self.player.item_inventory, outfile)
 
     def reset(self):
         # grow plants

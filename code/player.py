@@ -3,6 +3,7 @@ from settings import *
 from support import *
 from timer import Timer
 from random import randint
+from json import load, dump
 
 class Player(pygame.sprite.Sprite):
     def __init__(
@@ -55,18 +56,26 @@ class Player(pygame.sprite.Sprite):
         self.selected_seed = self.seeds[self.seed_index]
 
         # inventory
-        start_items = randint(0, 20) if START_ITEMS else 0
-        self.item_inventory = {
-            'wood': start_items,
-            'apple': start_items,
-            'corn': start_items,
-            'tomato': start_items
-        }
-        self.seed_inventory = {
-            'corn_seed': 5,
-            'tomato_seed': 5
-        }
-        self.money = 200
+        if LOAD:
+            with open('items.json', 'r') as openfile:
+                self.item_inventory = load(openfile)
+            with open('seeds.json', 'r') as openfile:
+                self.seed_inventory = load(openfile)
+            with open('money.json', 'r') as openfile:
+                self.money = load(openfile)
+        else:
+            start_items = randint(0, 20) if START_ITEMS else 0
+            self.item_inventory = {
+                'wood': start_items,
+                'apple': start_items,
+                'corn': start_items,
+                'tomato': start_items
+            }
+            self.seed_inventory = {
+                'corn_seed': 5,
+                'tomato_seed': 5
+            }
+            self.money = 200
 
         # interactions
         self.tree_sprites = tree_sprites
@@ -110,6 +119,10 @@ class Player(pygame.sprite.Sprite):
             temp_seed = self.selected_seed.replace('_seed', '')
             self.soil_layer.plant_seed(self.target_pos, temp_seed)
             self.seed_inventory[self.selected_seed] -= 1
+
+        # save to JSON
+        with open('seeds.json', 'w') as openfile:
+            dump(self.seed_inventory, openfile)
 
     def import_assets(self) -> None:
         self.animations = {

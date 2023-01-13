@@ -94,7 +94,7 @@ class SoilLayer:
         if LOAD:
             with open('save.json', 'r') as openfile:
                 self.grid = load(openfile)
-                self.create_soil_tiles()
+            self.create_soil_tiles()
         else:
             self.grid = [[[] for col in range(h_tiles)] for row in range(v_tiles)]
             farmable_tiles = load_pygame('../data/map.tmx').get_layer_by_name('Farmable').tiles()
@@ -240,7 +240,7 @@ class SoilLayer:
 
     def update_plants(self):
         for plant in self.plant_sprites.sprites():
-            plant.grow()
+            plant.grow()        
 
     def create_soil_tiles(self):
         self.soil_sprites.empty()

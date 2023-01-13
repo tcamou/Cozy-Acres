@@ -1,6 +1,7 @@
 import pygame
 from settings import *
 from timer import Timer
+from json import dump
 
 class Menu:
     def __init__(self, player, toggle_menu) -> None:
@@ -96,6 +97,15 @@ class Menu:
                     if self.player.money >= seed_price:
                         self.player.seed_inventory[current_item] += 1
                         self.player.money -= seed_price
+        
+        # save to JSON
+        with open("items.json", "w") as outfile:
+            dump(self.player.item_inventory, outfile)
+        with open("seeds.json", "w") as outfile:
+            dump(self.player.seed_inventory, outfile)
+        with open("money.json", "w") as outfile:
+            dump(self.player.money, outfile)
+        
 
         # control the selected index
         if self.index < 0:
@@ -215,42 +225,7 @@ class Inventory:
         # quit menu
         if keys[pygame.K_ESCAPE]:
             self.toggle_inventory()
-
-        # selected 
-        if not self.timer.active:
-            if keys[pygame.K_UP] or keys[pygame.K_w]: # up
-                self.index -= 1
-                self.timer.activate()
-
-            if keys[pygame.K_DOWN] or keys[pygame.K_s]: # down
-                self.index += 1
-                self.timer.activate()
-
-            if keys[pygame.K_SPACE] or keys[pygame.K_RETURN]: # buy / sell
-                self.timer.activate()
-
-                # get item
-                current_item = self.options[self.index]
-
-                # sell
-                if self.index <= self.sell_border:
-                    if self.player.item_inventory[current_item] > 0:
-                        self.player.item_inventory[current_item] -= 1
-                        self.player.money += SALE_PRICES[current_item]
-
-                # buy
-                else:
-                    seed_price = PURCHASE_PRICES[current_item]
-                    if self.player.money >= seed_price:
-                        self.player.seed_inventory[current_item] += 1
-                        self.player.money -= seed_price
-
-        # control the selected index
-        if self.index < 0:
-            self.index = len(self.options) - 1
-        if self.index > len(self.options) - 1:
-            self.index = 0
-
+            
     def show_entry(self, text_surf, amount, price, item_type, top, selected):
         # background
         bg_rect = pygame.Rect(self.main_rect.left, top, self.width, text_surf.get_height() + self.padding * 2)

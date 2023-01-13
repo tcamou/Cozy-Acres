@@ -19,10 +19,10 @@ START_ITEMS = True
 MASTER_VOL = 0.1
 
 # new / load
-if os.path.getsize('save.json') == 0:
-	LOAD = False
-else:
+if os.path.getsize('save.json') != 0 and os.path.getsize('items.json') != 0 and os.path.getsize('seeds.json') != 0 and os.path.getsize('money.json') != 0:
 	LOAD = True
+else:
+	LOAD = False
 
 # screen attributes
 SCREEN_WIDTH = 1280 * 3/4
